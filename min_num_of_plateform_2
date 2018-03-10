@@ -1,0 +1,60 @@
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+//ayush kushwaha
+//input
+// 1
+// 6
+// 900 940 950 1100 1500 1800 
+// 910 1200 1120 1130 1900 2000 
+//output
+//3
+int find(int arr[], int dep[], int n)
+{
+   sort(arr, arr+n);
+   sort(dep, dep+n);
+   int p=1, res=1;
+   int i=1,j=0;
+ 
+   while (i < n && j < n)
+   {
+      if (arr[i] < dep[j])
+      {
+          p++;
+          i++;
+          if (p>res) 
+              res=p;
+      }
+ 
+      else
+      {
+          p--;
+          j++;
+      }
+   }
+ 
+   return res;
+}	
+int main() 
+{
+	// your code goes here
+	int t;
+	cin>>t;
+	while(t--)
+	{
+		int n;
+		cin>>n;
+		int a[n];
+		int b[n];
+		for(int i=0;i<n;i++)
+		{
+			cin>>a[i];
+		}
+		for(int i=0;i<n;i++)
+		{
+			cin>>b[i];
+		}
+		cout<<find(a,b,n)<<"\n";
+	}
+	return 0;
+}
