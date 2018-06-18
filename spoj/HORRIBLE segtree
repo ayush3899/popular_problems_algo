@@ -1,0 +1,117 @@
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long int
+ll tree[1000005],a[1000005],lazy[1000005];
+
+void boost()
+{
+  cin.tie(0);
+}
+
+void build(ll node,ll st,ll en) 
+{
+    if(st==en)
+    {
+      tree[node]=0;
+    }
+    else
+    {
+      ll m=(st+en)/2;
+      build(2*node,st,m);
+      build(2*node+1,m+1,en);
+      tree[node]=tree[2*node]+tree[2*node+1];
+    }
+}
+
+void updateRange(ll node,ll st,ll en,ll p,ll q,ll v)
+{
+  if(lazy[node]!=0)
+  {
+    //we will add lazy to tree of that specific value of the node
+
+    tree[node]+=(en-st+1)*lazy[node];
+    if(st!=en)
+    {
+      lazy[2*node]+=lazy[node];
+      lazy[2*node+1]+=lazy[node];
+    }
+    lazy[node]=0;
+  }
+  if(st>en or st>q or en<p)
+    return ;
+
+    if(st>=p and en<=q)
+    {
+      tree[node]+=(en-st+1)*v;
+      if(st!=en)
+      {
+        lazy[2*node]+=v;
+        lazy[2*node+1]+=v;
+      }
+      return ;
+    }
+
+    ll m=(st+en)/2;
+    updateRange(2*node,st,m,p,q,v);
+    updateRange(2*node+1,m+1,en,p,q,v);
+    tree[node]=tree[2*node]+tree[node*2+1];
+}
+
+ll queryRange(ll node,ll st,ll en,ll p,ll q)
+{
+  if(st>en or st>q or en<p)
+    return 0;
+    if(lazy[node]!=0)
+    {
+      tree[node]+=(en-st+1)*lazy[node];
+      if(st!=en)
+      {
+        lazy[node*2]+=lazy[node];
+        lazy[2*node+1]+=lazy[node];
+      }
+      lazy[node]=0;
+    }
+    if(st>=p and en<=q)
+      return tree[node];
+    ll m = (st + en) / 2;
+    ll p1 = queryRange(node*2, st, m, p, q);         // Query left child
+    ll p2 = queryRange(node*2 + 1, m + 1, en, p, q); // Query right child
+    return (p1 + p2);
+
+}
+
+int main()
+{
+	
+  boost();
+
+  ll n,c,t;
+  cin>>t;
+  while(t--)
+  {
+  cin>>n>>c;
+    build(1,1,n);
+    memset(tree,0,sizeof(tree));
+    memset(lazy,0,sizeof(tree));
+    {
+      while(c--)
+      {
+        char k;
+        cin>>k;
+        if(k=='0')
+        {
+          ll p,q,v;
+          cin>>p>>q>>v;
+          updateRange(1,1,n,p,q,v);
+        }
+        else if(k=='1')
+        {
+          ll p,q;
+          cin>>p>>q;
+          cout<<queryRange(1,1,n,p,q)<<"\n";
+        }
+      }
+    }
+  }
+
+}
